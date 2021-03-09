@@ -20,7 +20,7 @@ def memoize(function):
 
 def load_data(lang, seq):
     return pd.read_excel(
-        "../strings/%s/%dwords_minus12start.xlsx" % (lang, seq), engine="openpyxl"
+        "../strings/%s/%dwords_17sents_first5start_TEST.xlsx" % (lang, seq), engine="openpyxl"
     )
 
 
@@ -145,7 +145,7 @@ def check_pairwise_stats(features, indices):
 
 
 def is_valid(stats):
-    return stats["p-value"].min() >= 0.001
+    return stats["p-value"].min() >= 0.05
 
 
 def get_samples(features, indices, sample, group):
