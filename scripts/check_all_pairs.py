@@ -20,7 +20,8 @@ def memoize(function):
 
 def load_data(lang, seq):
     return pd.read_excel(
-        "../strings/%s/%dwords_17sents_first5start_TEST.xlsx" % (lang, seq), engine="openpyxl"
+        "../strings/%s/%dwords_17sents_first5start_TEST_3X.xlsx" % (lang, seq),
+        engine="openpyxl",
     )
 
 
@@ -162,9 +163,6 @@ def set_indices(indices, sample, sx, sm, group):
 
 def trim_worst_outlier(features, indices, stats):
     sample = stats.iloc[stats["p-value"].idxmin()]
-    # START DEBUGGING
-    print(sample.pair, sample.feature)
-    # END DEBUGGING
     s0 = get_samples(features, indices, sample, 0)
     s1 = get_samples(features, indices, sample, 1)
     sm = np.mean(pd.concat((s0, s1)).values)
@@ -205,10 +203,20 @@ def export_stats(stats, lang, phase):
 
 
 def export_strings(strings, indices, lang):
-    print("Exporting Final " + lang + " Strings")
+    print("Exporting Final " + lang + " Strings...")
     for seq in strings:
         strings[seq][indices[seq]].to_excel(
             "../matched/%s_%dwords.xlsx" % (lang.lower(), seq), engine="openpyxl"
+        )
+    print_status(strings, indices)
+
+
+def print_status(strings, indices):
+    print("\nSEQLEN\tINITIAL\tFINAL")
+    for seq in strings:
+        print(
+            "%d\t%d\t%d"
+            % (seq, (strings[seq]).shape[0], (strings[seq][indices[seq]]).shape[0])
         )
 
 
@@ -221,14 +229,6 @@ def main():
             features[seq], strings[seq] = get_features(lang, seq)
         indices = get_indices_to_keep(features, lang)
         export_strings(strings, indices, lang)
-        # START DEBUGGING
-        print("\nSEQLEN\tINITIAL\tFINAL")
-        for seq in strings:
-            print(
-                "%d\t%d\t%d"
-                % (seq, (strings[seq]).shape[0], (strings[seq][indices[seq]]).shape[0])
-            )
-        # END DEBUGGING
     print("\nDone.\n")
 
 
